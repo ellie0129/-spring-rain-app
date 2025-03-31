@@ -6,9 +6,6 @@ st.set_page_config(page_title="봄비 점수 분석기", page_icon="🌱")
 st.title("🌧️ 봄비(Spring Rain) 점수 분석기")
 st.caption("이춘우 교수님의 기업가정신 통합모형 기반")
 
-# 경고 메시지 숨기기
-st.set_option('deprecation.showPyplotGlobalUse', False)
-
 # 탭 구성
 menu = st.sidebar.radio("메뉴", ["분석기", "모형 설명"])
 
@@ -53,8 +50,8 @@ if menu == "모형 설명":
     ### 🖼️ 모형 도식 이미지
 
     📌 *이 모형은 실제 논문(이춘우, 2019)에서 발췌한 이미지로 시각화한 것입니다.*
-    """)
 
+    """)
     # 이미지 삽입
     st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1c734f642e1b800d97c9e70c9abbd592.png", use_container_width=True)
 
