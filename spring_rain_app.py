@@ -46,27 +46,49 @@ if menu == "모형 설명":
     > 부지런함/창의성/도전정신 → 행동양식들 → 사회/시장 사명 → 가치/부 창출
 
     ---
-
+    
     ### 🖼️ 모형 도식 이미지
 
-    📌 *이 모형은 실제 논문(이춘우, 2023)에서 발췌한 이미지로 시각화한 것입니다.*
+    📌 *이 모형은 실제 논문(이춘우, 2019)에서 발췌한 이미지로 시각화한 것입니다。*
+    """)
 
-    (Streamlit 앱 완성 후 여기에 이미지 삽입 가능: `st.image()`)
+    # 여기서 이미지를 삽입할 수 있도록 수정
+    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1c734f642e1b800d97c9e70c9abbd592.png", use_column_width=True)
 
-    ---
+    st.markdown("---")
 
-    ### 📋 각 레이어별 구성 요약표
+    st.markdown("""
+    ### 📋 각 레이어별 구성 요소 상세
 
-    | Layer | 구성요소 수 | 예시 |
-    |-------|-------------|------|
-    | Outcome | 2 | 부의 증대, 가치 창출 |
-    | Mission | 4 | 기회추구, 공동체발전 등 |
-    | Attitude | 8 | 도전 · 극복, 역발상 · 재해석 등 |
-    | Competence | 8 | 창의성, 진취성, 위험감수성 등 |
+    #### 🧩 Outcome Layer (성과)
+    - **부의 증대 (Wealth Creation)**
+    - **가치 창출 (Value Creation)**
 
-    ---
+    #### 🎯 Mission Layer (사명)
+    - **기회추구 (실패위험)**
+    - **공동체발전 (상호이익)**
+    - **창조적파괴 (새로운질서)**
+    - **미래지향 (불확실성)**
 
-    > **TIP**: 분석기 탭으로 돌아가서 직접 점수를 입력해보며 이 구조를 체험해보세요!
+    #### 🌀 Attitude Layer (직무 수행 태도)
+    - 창조 · 발명 · 개발  
+    - 조합(결합·융합) · 중개  
+    - 혁신 · 변화 · 개선  
+    - 도전 · 극복  
+    - 주도(자수성가) · 사업화  
+    - 역발상 · 재해석  
+    - 개척 · 탐험 · 모험  
+    - 발견 · 발상 · 상상
+
+    #### 🧬 Competence Layer (역량 번들)
+    - 도전정신: 자기효능감, 자신감, 헝그리정신  
+    - 고수익 기대: 열망(야망), 추진력, 의사결정  
+    - 창의성: 리더십, 관리역량, 경쟁적 공격성  
+    - 아이디어 · 상상력: 인지능력, 성취욕구, 목표 달성 추구  
+    - 독립성 · 자기고용 · 자기세계: 부지런함(성실성), 순응 거부  
+    - 진취성: 열정, 자율지향, 선도적  
+    - 위험감수성: 인내심, 위험선호, CSR/CSV, 책임감  
+    - 혁신성: 기업윤리, 창의성, 변화 및 혁신 적극 수용
     """)
 
 else:
@@ -102,10 +124,21 @@ else:
             "진취성": 0.9,
             "위험감수성": 1.0,
             "혁신성": 0.75
+        },
+        "이춘우": {
+            "도전정신": 1.0,
+            "고수익 기대": 1.0,
+            "창의성": 1.0,
+            "아이디어 · 상상력": 1.0,
+            "독립성 · 자기고용 · 자기세계": 1.0,
+            "진취성": 1.0,
+            "위험감수성": 1.0,
+            "혁신성": 1.0
         }
     }
 
-    selected_name = st.text_input("AI가 분석할 인물의 이름을 입력하세요 (예: 제프 베조스, 김슬아, 정주영)")
+    st.markdown("AI가 분석할 인물의 이름을 입력하세요 (예: **제프 베조스**, **김슬아**, **정주영**)")
+    selected_name = st.text_input("인물 이름 입력")
 
     if selected_name in sample_profiles:
         st.success(f"✅ '{selected_name}'의 프로파일을 불러왔습니다.")
@@ -125,10 +158,10 @@ else:
         }
         competence_scores = {}
         for bundle, traits in competence_details.items():
-            st.markdown(f"**{bundle}**")
+            st.markdown(f"<h5 style='margin-bottom:5px;'>{bundle}</h5>", unsafe_allow_html=True)
             values = []
             for trait in traits:
-                score = st.slider(f"- {trait}", 0.0, 1.0, 0.5, 0.01)
+                score = st.slider(f"  {trait}", 0.0, 1.0, 0.5, 0.01)
                 values.append(score)
             competence_scores[bundle] = np.mean(values)
 
