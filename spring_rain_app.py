@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Streamlit 설정
-st.set_page_config(page_title="봄비 점수 분석기", page_icon="🌱", layout="wide")  # layout="wide"로 설정
+st.set_page_config(page_title="봄비 점수 분석기", page_icon="🌱", layout="wide")
 
 # 페이지 제목
 st.title("🌧️ 봄비(Spring Rain) 점수 분석기")
@@ -56,6 +56,8 @@ if menu == "모형 설명":
     📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
 
     """)
+
+    # 이미지 삽입
     st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
 
     st.markdown("---")
