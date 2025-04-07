@@ -184,7 +184,8 @@ def radar(title, data):
             "발견 · 발상 · 상상"
         ]
         data = OrderedDict((k, data[k]) for k in attitude_order if k in data)
-    fig = go.Figure()
+    
+    fig = go.Figure()  # 들여쓰기 위치 조정
     labels = list(data.keys())
     values = list(data.values())
     labels += [labels[0]]
