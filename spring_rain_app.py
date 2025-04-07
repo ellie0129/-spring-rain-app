@@ -122,22 +122,7 @@ else:
         st.success(f"✅ '{selected_name}'의 역량 프로파일을 불러왔습니다")
         st.markdown(f"💬 **AI 평가 주석**: {comment}")
 
-        trait_names = {
-    "도전정신": ["자기효능감 (self-efficacy), 자신감 (self confidence)", "성취 욕구 (N-Achievement)", "헝그리정신, 목표 달성 추구"],
-    "최고·최초·최신·유일 지향": ["열망(야망)", "추진력, 실행력", "결단력(의사결정)", "고수익 기대"],
-    "Integrity": ["리더십", "사업수완", "경영 관리 역량", "신용, 신뢰", "근면, 검소, 성실성"],
-    "창조적 문제해결": ["긍정적, 낙관적", "통찰력, 안목", "아이디어, 상상력, 호기심, 탐구", "인지 능력 (지적 능력)"],
-    "독립성 · 자기고용 · 자기세계": ["자아실현 (self actualization)", "자율성 지향", "순응 거부", "역경 극복"],
-    "진취성(선도성)": ["열정", "높은 모호성 인내도", "경쟁적 공격성", "선도적"],
-    "위험감수성": ["인내심", "위험선호", "CSR/CSV", "책임감(책임의식)"],
-    "혁신성": ["기업윤리", "창의성", "변화 및 혁신 적극 수용"]
-}
-with st.expander("📊 하위 요소별 점수 보기"):
-    for bundle, values in traits:
-        st.markdown(f"**{bundle}**")
-        for i, score in enumerate(values):
-            label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
-            st.markdown(f"  - {label}: {score:.2f}")
+        with st.expander("📊 하위 요소별 점수 보기"):
     trait_names = {
         "도전정신": ["자기효능감 (self-efficacy), 자신감 (self confidence)", "성취 욕구 (N-Achievement)", "헝그리정신, 목표 달성 추구"],
         "최고·최초·최신·유일 지향": ["열망(야망)", "추진력, 실행력", "결단력(의사결정)", "고수익 기대"],
@@ -147,9 +132,13 @@ with st.expander("📊 하위 요소별 점수 보기"):
         "진취성(선도성)": ["열정", "높은 모호성 인내도", "경쟁적 공격성", "선도적"],
         "위험감수성": ["인내심", "위험선호", "CSR/CSV", "책임감(책임의식)"],
         "혁신성": ["기업윤리", "창의성", "변화 및 혁신 적극 수용"]
-    }
-    label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
-    st.markdown(f"  - {label}: {score:.2f}")
+    };
+    for bundle, values in traits:
+        st.markdown(f"**{bundle}**")
+        for i, score in enumerate(values):
+            label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
+            st.markdown(f"  - {label}: {score:.2f}")
+    
 
     else:
         st.info("✏️ 분석할 인물에 대한 세부 역량을 직접 입력하세요!")
