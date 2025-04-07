@@ -76,6 +76,7 @@ trait_names = {
 
 if menu == "분석기":
     st.subheader("🎛️ 직접 조작: 나만의 점수 만들기")
+st.markdown("<br>", unsafe_allow_html=True)
     custom_scores = {}
     with st.expander("🧬 각 하위 요소별로 점수를 직접 설정해보세요 (0.0 ~ 1.0)"):
         for bundle, traits in trait_names.items():
@@ -87,7 +88,7 @@ if menu == "분석기":
             if scores:
                 custom_scores[bundle] = np.mean(scores)
 
-    selected_name = st.text_input("분석할 인물 이름을 입력하세요 (예: 제프 베조스, 김슬아, 정주영)")
+    selected_name = st.text_input("다음의 이름을 입력하여 예시 분석 결과를 확인할 수 있습니다: 제프 베조스, 김슬아, 정주영")
 
     sample_profiles = {
         "제프 베조스": ([
@@ -183,6 +184,14 @@ if menu == "분석기":
     if competence_scores:
         outcome, attitude, mission = compute_bombi_score(competence_scores)
 
+        if traits:
+            st.subheader("🧩 Competence Layer - 하위 요소별 점수")
+            for bundle, values in traits:
+                st.markdown(f"**{bundle}**")
+                for i, score in enumerate(values):
+                    label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
+                    st.markdown(f"  - {label}: {score:.2f}")
+
         st.subheader("🕸️ Competence Layer (Radar Chart)")
         fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
@@ -200,14 +209,16 @@ if menu == "분석기":
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("\n🌟 **Outcome Layer**")
-        for k, v in outcome.items():
+        st.markdown("🌀 **Attitude Layer**")
+        for k, v in attitude.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("\n🎯 **Mission Layer**")
+        st.markdown("🎯 **Mission Layer**")
         for k, v in mission.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("\n🌀 **Attitude Layer**")
-        for k, v in attitude.items():
+        st.markdown("🌟 **Outcome Layer**")
+        for k, v in outcome.items():
             st.markdown(f"- {k}: {v:.2f}")
+
+        
