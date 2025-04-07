@@ -174,4 +174,5 @@ else:
 
         st.subheader("🌧️ 봄비 점수 (Outcome Layer)")
         st.success(f"봄비 점수: {out * 100:.2f}점")
+"""
 
