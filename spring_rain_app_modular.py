@@ -168,6 +168,9 @@ else:
         
 from collections import OrderedDict
 
+
+from collections import OrderedDict
+
 def radar(title, data):
     if title == "🌀 Attitude Layer":
         attitude_order = [
@@ -186,13 +189,20 @@ def radar(title, data):
     values = list(data.values())
     labels += [labels[0]]
     values += [values[0]]
-    fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title, direction='clockwise'))
+    fig.add_trace(go.Scatterpolar(
+        r=values,
+        theta=labels,
+        fill='toself',
+        name=title,
+        direction='clockwise'
+    ))
     fig.update_layout(
         polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
         showlegend=False
     )
     st.markdown(f"#### {title}")
     st.plotly_chart(fig, use_container_width=True)
+
 
             fig = go.Figure()
             labels = list(data.keys())
