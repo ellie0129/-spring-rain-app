@@ -263,21 +263,17 @@ if menu == "분석기":
                     label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
                     st.markdown(f"  - {label}: {score:.2f}")
 
-        st.markdown("
-🌟 **Outcome Layer**")
+        st.markdown("🌟 **Outcome Layer**")
         outcome, attitude, mission = compute_bombi_score(competence_scores)
 
-        st.markdown("
-🌟 **Outcome Layer**")
+        st.markdown("🌟 **Outcome Layer**")
         for k, v in outcome.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("
-🎯 **Mission Layer**")
+        st.markdown("🎯 **Mission Layer**")
         for k, v in mission.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("
-🌀 **Attitude Layer**")
+        st.markdown("🌀 **Attitude Layer**")
         for k, v in attitude.items():
             st.markdown(f"- {k}: {v:.2f}")
