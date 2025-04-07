@@ -128,6 +128,54 @@ if menu == "분석기":
         st.success(f"✅ '{selected_name}'의 역량 프로파일을 불러왔습니다")
         st.markdown(f"💬 **AI 평가 주석**: {comment}")
 
+        # 컴퓨팅 함수 정의가 잘못된 들여쓰기로 인한 오류 해결
+        def compute_bombi_score(competence_scores):
+            comp_to_att = {
+                "도전정신": ["도전 · 극복", "주도 · 사업화"],
+                "최고·최초·최신·유일 지향": ["창조 · 발명 · 개발", "혁신 · 변화 · 개선"],
+                "Integrity": ["조합 · 중개", "발견 · 발상 · 상상"],
+                "창조적 문제해결": ["역발상 · 재해석", "개척 · 탐험 · 모험"],
+                "독립성 · 자기고용 · 자기세계": ["발견 · 발상 · 상상", "도전 · 극복"],
+                "진취성(선도성)": ["개척 · 탐험 · 모험", "주도 · 사업화"],
+                "위험감수성": ["조합 · 중개", "혁신 · 변화 · 개선"],
+                "혁신성": ["창조 · 발명 · 개발", "역발상 · 재해석"]
+            }
+
+            att_to_mission = {
+                "창조 · 발명 · 개발": ["미래지향"],
+                "조합 · 중개": ["기회추구"],
+                "혁신 · 변화 · 개선": ["창조적 파괴"],
+                "도전 · 극복": ["기회추구"],
+                "주도 · 사업화": ["기회추구"],
+                "역발상 · 재해석": ["창조적 파괴"],
+                "개척 · 탐험 · 모험": ["미래지향"],
+                "발견 · 발상 · 상상": ["공동체 발전"]
+            }
+
+            mission_to_outcome = {
+                "기회추구": ["부의 증대"],
+                "공동체 발전": ["가치 창출"],
+                "창조적 파괴": ["부의 증대"],
+                "미래지향": ["가치 창출"]
+            }
+
+            attitude_scores = {}
+            for comp, score in competence_scores.items():
+                for att in comp_to_att[comp]:
+                    attitude_scores[att] = attitude_scores.get(att, 0) + score * 0.5
+
+            mission_scores = {}
+            for att, score in attitude_scores.items():
+                for mission in att_to_mission[att]:
+                    mission_scores[mission] = mission_scores.get(mission, 0) + score * 0.5
+
+            outcome_scores = {}
+            for mission, score in mission_scores.items():
+                for outcome in mission_to_outcome[mission]:
+                    outcome_scores[outcome] = outcome_scores.get(outcome, 0) + score * 0.5
+
+            return outcome_scores, attitude_scores, mission_scores
+
             def compute_bombi_score(competence_scores):
         comp_to_att = {
             "도전정신": ["도전 · 극복", "주도 · 사업화"],
