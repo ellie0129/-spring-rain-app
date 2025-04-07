@@ -56,7 +56,8 @@ if menu == "모형 설명":
     📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
 
     """)
-    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True, cache_key=None)
+    # Image URL (raw URL 사용)
+    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
 
     st.markdown("---")
 
@@ -167,7 +168,7 @@ else:
     st.markdown("---")
     if selected_name == "제프 베조스":
         st.subheader("📋 제프 베조스: Amazon 창업자")
-        st.markdown("""
+        st.markdown(""" 
         **주요 역량 번들**:
         - **위험감수성**: 제프 베조스는 **위험을 감수하고 새로운 시장을 창출**하는 데 두각을 나타냈습니다. **Amazon** 창립 초기, 많은 전문가들이 성공을 의심했지만, 그는 **전자상거래**라는 혁신적인 사업 모델에 투자하고, **급격한 확장**을 추진했습니다.
         - **뛰어난 이유**: 제프 베조스는 **혁신과 변화를 추구하는 사고**를 바탕으로 **모든 사업의 불확실성과 위험을 기회로 바꾼** 인물입니다. 또한, **장기적 비전**과 **고수익을 위한 결단력** 덕분에, **Amazon**을 세계 최대의 온라인 마켓으로 성장시켰습니다.
