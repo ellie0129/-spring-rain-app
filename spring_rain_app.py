@@ -1,20 +1,24 @@
-# spring_rain_app.py (전체 코드 - 분석기 탭 수정 반영)
-
-code = """
+# spring_rain_app.py - 1/5
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
+# Streamlit 설정
 st.set_page_config(page_title="봄비 점수 분석기", page_icon="🌱", layout="wide")
 
+# 앱 제목
 st.title("🌧️ 봄비(Spring Rain) 점수 분석기")
 st.caption("이춘우 교수님의 기업가정신 통합모형 기반")
 
+# 탭 메뉴
 menu = st.sidebar.radio("메뉴", ["분석기", "모형 설명"])
 
+# ---------------------------------------------
+# 📘 모형 설명 탭 (기존 코드 유지, 절대 수정하지 않음)
+# ---------------------------------------------
 if menu == "모형 설명":
     st.header("📘 기업가정신 통합모형 구조 설명")
-    st.markdown(\"""
+    st.markdown(\"\"\"
     ### 🔄 전체 레이어 구조
 
     이 앱은 이춘우 교수님의 [기업가정신 통합모형]에 따라 총 4개의 레이어로 구성되어 있습니다:
@@ -52,14 +56,14 @@ if menu == "모형 설명":
 
     ### 🖼️ 모형 도식 이미지
 
-    📌 *이 모형은 실제 논문(이춘우, 2019)에서 발췌한 이미지로 시각화한 것입니다.*
-
-    \""")
+    📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
+    \"\"\")
     st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
     st.markdown("---")
-
 else:
-    # 분석기 탭: 전체 기능 수정 반영
+    # ---------------------------------------------
+    # 🤖 분석기 탭 (분석 기능 전체 개선)
+    # ---------------------------------------------
     st.subheader("🤖 AI 기반 인물 분석")
 
     st.markdown("AI가 분석할 인물의 이름을 입력하세요 (예: **제프 베조스**, **김슬아**, **정주영**)")
@@ -93,7 +97,8 @@ else:
         competence_scores = sample_profiles[selected_name]
     else:
         st.info("아래에서 직접 세부 역량을 입력해도 됩니다.")
-        st.subheader("1️⃣ 세부 역량 입력")
+        st.subheader("1️⃣ 세부 역량 직접 입력")
+
         bundles = {
             "도전정신": ["자기효능감", "자신감", "헝그리정신"],
             "고수익 기대": ["열망(야망)", "추진력", "의사결정"],
@@ -104,6 +109,7 @@ else:
             "위험감수성": ["인내심", "위험선호", "CSR/CSV", "책임감"],
             "혁신성": ["기업윤리", "창의성", "변화 수용"]
         }
+
         competence_scores = {}
         for bundle, traits in bundles.items():
             cols = st.columns(len(traits))
@@ -113,11 +119,15 @@ else:
             competence_scores[bundle] = np.mean(values)
 
         if st.button("💧 입력 완료 후 분석 시작"):
-            selected_name = "입력완료"  # 분석 트리거를 위한 명시적 플래그
+            selected_name = "입력완료"  # 트리거용 플래그
 
+# 👉 다음 메시지(3 / 5)는 분석 계산 로직과 시각화 함수부터 시작됩니다.
     if selected_name:
         def compute_layers(comp):
+            # 점수 상한: 1.0로 제한
             comp = {k: min(v, 1.0) for k, v in comp.items()}
+
+            # Competence → Attitude 매핑
             comp_to_att = {
                 "도전정신": ["창조 · 발명 · 개발", "조합 · 중개"],
                 "고수익 기대": ["조합 · 중개", "혁신 · 변화 · 개선"],
@@ -128,12 +138,15 @@ else:
                 "위험감수성": ["개척 · 탐험 · 모험", "발견 · 발상 · 상상"],
                 "혁신성": ["발견 · 발상 · 상상", "창조 · 발명 · 개발"]
             }
+
+            # Attitude 계산
             att = {}
             for c, val in comp.items():
                 for a in comp_to_att[c]:
                     att[a] = att.get(a, 0) + val * 0.5
             att = {k: min(v, 1.0) for k, v in att.items()}
 
+            # Attitude → Mission 매핑
             att_to_mis = {
                 "창조 · 발명 · 개발": {"기회추구": 0.25, "미래지향": 0.25},
                 "조합 · 중개": {"기회추구": 0.5},
@@ -144,13 +157,17 @@ else:
                 "개척 · 탐험 · 모험": {"창조적파괴": 0.25, "미래지향": 0.25},
                 "발견 · 발상 · 상상": {"미래지향": 0.5}
             }
+
+            # Mission 계산
             mis = {}
             for a, val in att.items():
                 for m, w in att_to_mis[a].items():
                     mis[m] = mis.get(m, 0) + val * w
             mis = {k: min(v, 1.0) for k, v in mis.items()}
 
+            # Outcome: Mission 평균의 0.25배 (1.0 제한)
             outcome = round(min(sum(mis.values()) * 0.25, 1.0), 3)
+
             return comp, att, mis, outcome
 
         comp, att, mis, out = compute_layers(competence_scores)
@@ -158,21 +175,34 @@ else:
         st.subheader("📊 역량 번들 점수 (Competence Layer)")
         st.dataframe({k: [f"{v:.2f}"] for k, v in comp.items()})
 
+# 👉 다음 메시지(4 / 5)에서는 레이더 차트 시각화와 Mission 출력, 봄비 점수 표시가 이어집니다.
+        # 레이더 차트 시각화 함수
         def radar(title, data):
             fig = go.Figure()
             labels = list(data.keys())
-            values = list(data.values()) + [list(data.values())[0]]
+            values = list(data.values())
             labels += [labels[0]]
-            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself'))
-            fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=False)
+            values += [values[0]]
+            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title))
+            fig.update_layout(
+                polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+                showlegend=False
+            )
             st.markdown(f"#### {title}")
             st.plotly_chart(fig, use_container_width=True)
 
+        # 레이어별 차트 출력
         radar("🕸️ Competence Layer", comp)
         radar("🌀 Attitude Layer", att)
         radar("🎯 Mission Layer", mis)
 
-        st.subheader("🌧️ 봄비 점수 (Outcome Layer)")
-        st.success(f"봄비 점수: {out * 100:.2f}점")
-"""
+        st.subheader("🎯 Mission 점수 (사명 레이어)")
+        st.dataframe({k: [f"{v:.2f}"] for k, v in mis.items()})
 
+        st.subheader("🌧️ Outcome 점수 (봄비 점수)")
+        st.success(f"최종 봄비 점수: {out * 100:.2f}점")
+        # 추가 안내 또는 예외 처리 (필요시 확장 가능)
+        st.markdown("---")
+        st.caption("분석기 결과는 단순 참고용이며, 실제 기업가정신 역량 평가를 위한 정밀 분석은 전문가 상담을 권장합니다.")
+
+# 앱 종료
