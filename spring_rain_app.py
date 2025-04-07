@@ -58,7 +58,7 @@ if menu == "모형 설명":
     """)
 
     # 이미지 삽입
-    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
+    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
 
     st.markdown("---")
 
