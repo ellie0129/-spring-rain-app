@@ -183,21 +183,6 @@ if menu == "분석기":
         return outcome_scores, attitude_scores, mission_scores
 
     if competence_scores:
-        outcome, attitude, mission = compute_bombi_score(competence_scores)
-
-        st.header("📈 분석 결과 요약")
-        st.subheader("Outcome Layer")
-        for k, v in outcome.items():
-            st.markdown(f"- 🌟 {k}: {v:.2f}")
-
-        st.subheader("Mission Layer")
-        for k, v in mission.items():
-            st.markdown(f"- 🎯 {k}: {v:.2f}")
-
-        st.subheader("Attitude Layer")
-        for k, v in attitude.items():
-            st.markdown(f"- 🌀 {k}: {v:.2f}")
-
         st.subheader("🕸️ Competence Layer (Radar Chart)")
         fig = go.Figure()
         fig.add_trace(go.Scatterpolar(
@@ -207,7 +192,29 @@ if menu == "분석기":
             name='봄비 점수'
         ))
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            polar=dict(
+                radialaxis=dict(visible=True, range=[0, 1]),
+                angularaxis=dict(direction='clockwise')
+            ),
             showlegend=False
         )
         st.plotly_chart(fig, use_container_width=True)
+
+        with st.expander("📊 하위 요소별 점수 보기"):
+            for bundle, values in traits:
+                st.markdown(f"**{bundle}**")
+                for i, score in enumerate(values):
+                    label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
+                    st.markdown(f"  - {label}: {score:.2f}")
+
+        st.markdown("\n🌟 **Outcome Layer**")
+        for k, v in outcome.items():
+            st.markdown(f"- {k}: {v:.2f}")
+
+        st.markdown("\n🎯 **Mission Layer**")
+        for k, v in mission.items():
+            st.markdown(f"- {k}: {v:.2f}")
+
+        st.markdown("\n🌀 **Attitude Layer**")
+        for k, v in attitude.items():
+            st.markdown(f"- {k}: {v:.2f}")
