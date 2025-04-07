@@ -128,14 +128,7 @@ if menu == "분석기":
         st.success(f"✅ '{selected_name}'의 역량 프로파일을 불러왔습니다")
         st.markdown(f"💬 **AI 평가 주석**: {comment}")
 
-        with st.expander("📊 하위 요소별 점수 보기"):
-            for bundle, values in traits:
-                st.markdown(f"**{bundle}**")
-                for i, score in enumerate(values):
-                    label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
-                    st.markdown(f"  - {label}: {score:.2f}")
-
-    def compute_bombi_score(competence_scores):
+            def compute_bombi_score(competence_scores):
         comp_to_att = {
             "도전정신": ["도전 · 극복", "주도 · 사업화"],
             "최고·최초·최신·유일 지향": ["창조 · 발명 · 개발", "혁신 · 변화 · 개선"],
@@ -207,14 +200,21 @@ if menu == "분석기":
                     label = trait_names.get(bundle, [])[i] if i < len(trait_names.get(bundle, [])) else f"하위 요소 {i+1}"
                     st.markdown(f"  - {label}: {score:.2f}")
 
-        st.markdown("\n🌟 **Outcome Layer**")
+        st.markdown("
+🌟 **Outcome Layer**")
+        outcome, attitude, mission = compute_bombi_score(competence_scores)
+
+        st.markdown("
+🌟 **Outcome Layer**")
         for k, v in outcome.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("\n🎯 **Mission Layer**")
+        st.markdown("
+🎯 **Mission Layer**")
         for k, v in mission.items():
             st.markdown(f"- {k}: {v:.2f}")
 
-        st.markdown("\n🌀 **Attitude Layer**")
+        st.markdown("
+🌀 **Attitude Layer**")
         for k, v in attitude.items():
             st.markdown(f"- {k}: {v:.2f}")
