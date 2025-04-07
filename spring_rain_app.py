@@ -76,7 +76,7 @@ trait_names = {
 
 if menu == "분석기":
     st.subheader("🎛️ 직접 조작: 나만의 점수 만들기")
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     custom_scores = {}
     with st.expander("🧬 각 하위 요소별로 점수를 직접 설정해보세요 (0.0 ~ 1.0)"):
         for bundle, traits in trait_names.items():
