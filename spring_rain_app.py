@@ -75,6 +75,21 @@ trait_names = {
 }
 
 if menu == "분석기":
+    st.subheader("🎛️ 직접 조작: 나만의 점수 만들기")
+    custom_scores = {}
+    with st.expander("🧬 각 하위 요소별로 점수를 직접 설정해보세요 (0.0 ~ 1.0)"):
+        for bundle, traits in trait_names.items():
+            scores = []
+            st.markdown(f"**{bundle}**")
+            for trait in traits:
+                val = st.slider(f"{trait}", 0.0, 1.0, 0.0, 0.01, key=f"{bundle}-{trait}")
+                scores.append(val)
+            if scores:
+                custom_scores[bundle] = np.mean(scores)
+
+    if not selected_name and custom_scores:
+        competence_scores = custom_scores
+        st.success("🧪 직접 설정한 점수로 분석을 진행합니다!")
     st.subheader("🤖 AI 기반 인물 분석")
     st.caption("예시: 제프 베조스, 김슬아, 정주영")
 
