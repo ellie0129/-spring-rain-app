@@ -165,7 +165,35 @@ else:
     if st.button("💧 분석 시작"):
         comp, att, mis, outcome = compute_bombi_score(trait_inputs)
 
-        def radar(title, data):
+        
+from collections import OrderedDict
+
+def radar(title, data):
+    if title == "🌀 Attitude Layer":
+        attitude_order = [
+            "창조 · 발명 · 개발",
+            "조합(결합/융합) · 중개",
+            "혁신 · 변화 · 개선",
+            "도전 · 극복",
+            "주도(자수성가) · 사업화",
+            "역발상 · 재해석",
+            "개척 · 탐험 · 모험",
+            "발견 · 발상 · 상상"
+        ]
+        data = OrderedDict((k, data[k]) for k in attitude_order if k in data)
+    fig = go.Figure()
+    labels = list(data.keys())
+    values = list(data.values())
+    labels += [labels[0]]
+    values += [values[0]]
+    fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title, direction='clockwise'))
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+        showlegend=False
+    )
+    st.markdown(f"#### {title}")
+    st.plotly_chart(fig, use_container_width=True)
+
             fig = go.Figure()
             labels = list(data.keys())
             values = list(data.values())
