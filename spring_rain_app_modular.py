@@ -1,4 +1,5 @@
-
+import sys
+import os
 import streamlit as st
 import numpy as np
 from modules.bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
