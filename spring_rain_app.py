@@ -137,7 +137,7 @@ elif menu == "분석기":
 
     if st.button("💧 분석 실행"):
         st.success("분석이 시작되었습니다!")
-        st.markdown("⚙️ 분석 결과가 여기에 표시될 수 있도록 기능 연동을 준비해주세요.")
+        
         # 역량 번들 점수 계산
         competence_scores = {}
         for bundle, traits in TRAIT_STRUCTURE.items():
@@ -181,6 +181,9 @@ elif menu == "분석기":
             for m, w in att_to_mis[a].items():
                 mission_scores[m] = mission_scores.get(m, 0) + val * w
         mission_scores = {k: round(min(v, 1.0), 3) for k, v in mission_scores.items()}
+        # Mission Layer 재정렬 (시계방향)
+        mission_scores = {k: mission_scores[k] for k in ["기회추구", "공동체발전", "창조적파괴", "미래지향"]}
+
 
         # Outcome 계산
         outcome_score = round(min(sum(mission_scores.values()) * 0.25, 1.0), 3)
@@ -207,7 +210,7 @@ elif menu == "분석기":
         # 출력
         st.markdown("## 📊 분석 결과")
         radar("🧩 Competence Layer", competence_scores, clockwise=True)
-        radar("🌀 Attitude Layer", attitude_scores, clockwise=False)
+        radar("🌀 Attitude Layer", attitude_scores, clockwise=True)
         radar("🎯 Mission Layer", mission_scores, clockwise=True)
 
         st.markdown("### 🌧️ Outcome Score (봄비 점수)")
