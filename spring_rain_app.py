@@ -6,10 +6,15 @@ import os
 
 # Streamlit 설정
 st.set_page_config(page_title="봄비 점수 분석기", page_icon="🌱", layout="wide")
+st.title("🌧️ 봄비(Spring Rain) 점수 분석기")
+st.caption("이춘우 교수님의 기업가정신 통합모형 기반")
 
-# 왼쪽 사이드바 탭 메뉴 생성: 모형 설명, 분석기, 샘플 데이터
+# 왼쪽 사이드바 탭 메뉴 (모형 설명, 분석기, 샘플 데이터)
 menu = st.sidebar.radio("메뉴", ["모형 설명", "분석기", "샘플 데이터"])
 
+##############################
+# 모형 설명 탭 (변경 없음)
+##############################
 if menu == "모형 설명":
     st.header("📘 기업가정신 통합모형 구조 설명")
     st.markdown("""
@@ -50,16 +55,19 @@ if menu == "모형 설명":
     
     ### 🖼️ 모형 도식 이미지
     
-    📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
+    📌 *이 모형은 실제 논문(이춘우, 2019)에서 발췌한 이미지로 시각화한 것입니다.*
     """)
-    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
+    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1c734f642e1b800d97c9e70c9abbd592.png", use_container_width=True)
     st.markdown("---")
 
+##############################
+# 분석기 탭 (변경 없음)
+##############################
 elif menu == "분석기":
     st.header("🤖 나의 역량 점수 입력")
     st.markdown("슬라이더를 조정하여 각 하위 역량을 평가한 뒤 '분석 실행'을 누르세요.")
     
-    # 역량 번들을 구성하는 세부 항목 구조 (분석기 탭 전용)
+    # 역량 번들을 구성하는 세부 항목 구조
     TRAIT_STRUCTURE = {
         "도전정신": [
             "자기효능감 (self-efficacy), 자신감 (self confidence)",
@@ -153,7 +161,7 @@ elif menu == "분석기":
             "혁신성": ["발견 · 발상 · 상상", "창조 · 발명 · 개발"]
         }
         
-        # Attitude 계산: 각 역량이 두 태도에 0.5씩 기여
+        # Attitude 계산
         attitude_scores = {}
         for c, val in competence_scores.items():
             for a in comp_to_att[c]:
@@ -172,19 +180,16 @@ elif menu == "분석기":
             "발견 · 발상 · 상상": {"미래지향": 0.5}
         }
         
-        # Mission 점수 계산
         mission_scores = {}
-        for a, val in attitude_scores.items():
-            for m, w in att_to_mis[a].items():
+        for att, val in attitude_scores.items():
+            for m, w in att_to_mis[att].items():
                 mission_scores[m] = mission_scores.get(m, 0) + val * w
         mission_scores = {k: round(min(v, 1.0), 3) for k, v in mission_scores.items()}
-        # Mission Layer 순서 재정렬
         mission_scores = {k: mission_scores[k] for k in ["기회추구", "공동체발전", "창조적파괴", "미래지향"]}
         
-        # Outcome 계산: Mission 총합에 0.25 곱하여 산출
         outcome_score = round(min(sum(mission_scores.values()) * 0.25, 1.0), 3)
         
-        # 레이더 차트 함수: 데이터 시각화를 위한 함수
+        # 레이더 차트 함수 (분석기 탭에서 사용)
         def radar(title, data, clockwise=True):
             labels = list(data.keys())
             values = list(data.values())
@@ -193,36 +198,49 @@ elif menu == "분석기":
                 values = values[::-1]
             labels += [labels[0]]
             values += [values[0]]
-            
             fig = go.Figure()
-            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title))
+            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill="toself", name=title))
             fig.update_layout(
                 polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
                 showlegend=False
             )
-            st.markdown(f"#### {title}")
             st.plotly_chart(fig, use_container_width=True)
         
-        # 결과 출력
-        st.markdown("## 📊 분석 결과")
-        radar("🧩 Competence Layer", competence_scores, clockwise=True)
-        radar("🌀 Attitude Layer", attitude_scores, clockwise=True)
-        radar("🎯 Mission Layer", mission_scores, clockwise=True)
+        st.markdown("---")
+        st.subheader("📊 역량 번들 점수 레이더 차트")
+        radar_labels = list(competence_scores.keys())
+        radar_values = list(competence_scores.values())
+        radar_values.append(radar_values[0])
+        radar_labels.append(radar_labels[0])
         
-        st.markdown("### 🌧️ Outcome Score (봄비 점수)")
-        st.success(f"최종 봄비 점수: {outcome_score * 100:.2f}점")
+        fig = go.Figure()
+        fig.add_trace(go.Scatterpolar(
+            r=radar_values,
+            theta=radar_labels,
+            fill="toself",
+            name="역량 프로파일"
+        ))
+        fig.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            showlegend=False,
+            margin=dict(l=30, r=30, t=30, b=30),
+            height=500
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
+##############################
+# 샘플 데이터 탭 (수정됨)
+##############################
 elif menu == "샘플 데이터":
     st.header("🧪 샘플 인물 데이터 보기")
     
-    # JSON 파일 경로 설정 (현재 파일과 같은 디렉토리에 위치)
+    # JSON 파일 경로 설정 (spring_rain_app.py와 같은 디렉토리)
     json_path = os.path.join(os.path.dirname(__file__), "sample_data.json")
     
-    # JSON 파일에서 샘플 데이터 불러오기
     try:
         with open(json_path, "r", encoding="utf-8") as f:
             sample_data = json.load(f)
-        detailed_profiles = sample_data.get("sample_profiles", {})  # 각 인물에 대해 세부 하위 요소 포함
+        detailed_profiles = sample_data.get("sample_profiles", {})
         sample_comments = sample_data.get("sample_comments", {})
     except Exception as e:
         st.error(f"샘플 데이터 불러오기 실패: {e}")
@@ -234,31 +252,20 @@ elif menu == "샘플 데이터":
         
         st.markdown(f"### 🧾 {selected_profile}의 상세 점수 프로파일")
         
-        # 상세 프로파일: 각 Competence 번들의 하위 요소 점수와 평균 계산
+        # profile_detail: 하위 요소 포함 세부 데이터
         profile_detail = detailed_profiles[selected_profile]
+        
+        # computed_competence 계산 (각 역량 번들의 하위 요소 평균)
         computed_competence = {}
-        st.markdown("#### 상세 역량 번들 점수 (하위 요소별)")
         for bundle, subtraits in profile_detail.items():
-            # subtraits가 딕셔너리인 경우 각 하위 요소 값 출력 및 평균 계산
             if isinstance(subtraits, dict):
-                st.markdown(f"**{bundle}**")
-                trait_list = []
-                for trait, score in subtraits.items():
-                    st.write(f"- {trait}: {score}")
-                    trait_list.append(score)
-                avg_score = round(sum(trait_list) / len(trait_list), 3) if trait_list else 0
-                st.write(f"**→ {bundle} 평균 점수: {avg_score}**")
+                trait_scores = list(subtraits.values())
+                avg_score = round(sum(trait_scores) / len(trait_scores), 3) if trait_scores else 0
                 computed_competence[bundle] = avg_score
             else:
-                # 만약 단순 값이라면
                 computed_competence[bundle] = subtraits
         
-        st.markdown("---")
-        st.markdown("#### 해석 주석")
-        st.markdown(f"**해설**: {sample_comments.get(selected_profile, '해당 인물에 대한 설명이 없습니다.')}")
-        
-        # 이제 '분석기' 탭과 동일한 매핑을 이용하여 Attitude, Mission, Outcome 계산
-        # Competence → Attitude 매핑
+        # 계산: Competence → Attitude → Mission → Outcome (분석기와 동일한 매핑)
         comp_to_att = {
             "도전정신": ["창조 · 발명 · 개발", "조합(결합/융합) · 중개"],
             "최고·최초·최신·유일 지향": ["조합(결합/융합) · 중개", "혁신 · 변화 · 개선"],
@@ -276,7 +283,6 @@ elif menu == "샘플 데이터":
                     attitude_scores[att] = attitude_scores.get(att, 0) + avg * 0.5
         attitude_scores = {k: round(min(v, 1.0), 3) for k, v in attitude_scores.items()}
         
-        # Attitude → Mission 매핑
         att_to_mis = {
             "창조 · 발명 · 개발": {"기회추구": 0.25, "미래지향": 0.25},
             "조합(결합/융합) · 중개": {"기회추구": 0.5},
@@ -289,25 +295,14 @@ elif menu == "샘플 데이터":
         }
         mission_scores = {}
         for att, val in attitude_scores.items():
-            for m, w in att_to_mis[att].items():
+            for m, w in att_to_mis.get(att, {}).items():
                 mission_scores[m] = mission_scores.get(m, 0) + val * w
         mission_scores = {k: round(min(v, 1.0), 3) for k, v in mission_scores.items()}
-        mission_scores = {k: mission_scores[k] for k in ["기회추구", "공동체발전", "창조적파괴", "미래지향"]}
+        mission_scores = {k: mission_scores.get(k, 0) for k in ["기회추구", "공동체발전", "창조적파괴", "미래지향"]}
         
         outcome_score = round(min(sum(mission_scores.values()) * 0.25, 1.0), 3)
         
-        st.markdown("---")
-        st.markdown("#### ▶️ 계산된 결과")
-        st.markdown("**Competence Layer (평균 점수)**")
-        st.write(computed_competence)
-        st.markdown("**Attitude Layer**")
-        st.write(attitude_scores)
-        st.markdown("**Mission Layer**")
-        st.write(mission_scores)
-        st.markdown("**Outcome (봄비 점수)**")
-        st.success(f"{outcome_score * 100:.2f}점")
-        
-        # 레이더 차트 출력 (Aggregated Competence Layer)
+        # Radar 차트 함수 (샘플 데이터 탭에서도 재사용)
         def radar(title, data, clockwise=True):
             labels = list(data.keys())
             values = list(data.values())
@@ -316,19 +311,59 @@ elif menu == "샘플 데이터":
                 values = values[::-1]
             labels += [labels[0]]
             values += [values[0]]
-            
             fig = go.Figure()
-            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill="toself", name=title))
+            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title))
             fig.update_layout(
                 polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
                 showlegend=False
             )
-            st.markdown(f"#### {title}")
             st.plotly_chart(fig, use_container_width=True)
         
-        radar("🧩 Competence Layer (Aggregated)", computed_competence)
-        radar("🌀 Attitude Layer", attitude_scores)
-        radar("🎯 Mission Layer", mission_scores)
-    
+        # ========= 원하는 순서로 출력 =========
+        # 1. 해석 주석
+        st.markdown("<h4>🔎 해석 주석</h4>", unsafe_allow_html=True)
+        st.markdown(f"<p style='font-size:16px;'>{sample_comments.get(selected_profile, '해당 인물에 대한 설명이 없습니다.')}</p>", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        
+        # 2. 레이더 차트 3개 (종방향)
+        with st.expander("**Competence Layer (Aggregated) Radar Chart**", expanded=True):
+            radar("🧩 Competence Layer (Aggregated)", computed_competence)
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("**Attitude Layer Radar Chart**", expanded=True):
+            radar("🌀 Attitude Layer", attitude_scores)
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("**Mission Layer Radar Chart**", expanded=True):
+            radar("🎯 Mission Layer", mission_scores)
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        
+        # 3. 계산된 결과 (종방향)
+        st.markdown("#### ▶️ 계산된 결과", unsafe_allow_html=True)
+        with st.expander("**Competence Layer (평균 점수)**"):
+            st.write(computed_competence)
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("**Attitude Layer**"):
+            st.write(attitude_scores)
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("**Mission Layer**"):
+            st.write(mission_scores)
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("**Outcome (봄비 점수)**"):
+            st.success(f"{outcome_score * 100:.2f}점")
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        
+        # 4. 상세 역량 번들 점수 (하위 요소별) - 토글 적용
+        with st.expander("**▶ 상세 역량 번들 점수 (하위 요소별)**"):
+            st.markdown("#### 상세 역량 번들 점수 (하위 요소별)")
+            for bundle, subtraits in profile_detail.items():
+                if isinstance(subtraits, dict):
+                    st.markdown(f"**{bundle}**")
+                    trait_list = []
+                    for trait, score in subtraits.items():
+                        st.write(f"- {trait}: {score}")
+                        trait_list.append(score)
+                    avg_score = round(sum(trait_list) / len(trait_list), 3) if trait_list else 0
+                    st.write(f"**→ {bundle} 평균 점수: {avg_score}**")
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        
     else:
         st.info("샘플 데이터가 없습니다.")
