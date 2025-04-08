@@ -1,14 +1,6 @@
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-import sys
-import os
-
-# 명시적으로 모듈 경로 추가 (중요!)
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "modules")))
-
-from bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
-from radar_chart import draw_all_radars, draw_outcome_layer
 
 # Streamlit 페이지 기본 설정
 st.set_page_config(page_title="🌧️ 봄비 점수 분석기", page_icon="🌱", layout="wide")
@@ -25,11 +17,22 @@ if menu == "모형 설명":
         - **Mission Layer**: 기회추구, 공동체발전, 창조적파괴, 미래지향
         - **Attitude Layer**: 8가지 행동양식
         - **Competence Layer**: 8가지 역량 번들
-        
+
         점수는 아래로부터 위로 전이됩니다: Competence → Attitude → Mission → Outcome
         """)
     st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
+
 else:
+    import sys, os
+    # 명시적 경로 설정 (추천 방식)
+    module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'modules'))
+    if module_path not in sys.path:
+        sys.path.append(module_path)
+
+    # 경로를 추가했으므로 모듈 이름만 import
+    from bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
+    from radar_chart import draw_all_radars, draw_outcome_layer
+
     st.header("🤖 인물 분석")
     sample_profiles = {
         "제프 베조스": {"도전정신": 0.9, "최고·최초·최신·유일 지향": 1.0, "Integrity": 0.9, "창조적 문제해결": 0.85,
@@ -41,11 +44,11 @@ else:
         "이춘우": {"도전정신": 1.0, "최고·최초·최신·유일 지향": 1.0, "Integrity": 1.0, "창조적 문제해결": 1.0,
                   "독립성 · 자기고용 · 자기세계": 1.0, "진취성(선도성)": 1.0, "위험감수성": 1.0, "혁신성": 1.0}
     }
-    
+
     selected_name = st.text_input("분석할 인물 이름을 입력하세요:", value="제프 베조스")
     if selected_name == "이춘우":
         st.success("이춘우 교수님은 완벽한 기업가이십니다! 🎉")
-    
+
     if selected_name in sample_profiles:
         competence_scores = sample_profiles[selected_name]
         st.success(f"'{selected_name}' 프로파일 불러오기 성공!")
@@ -58,7 +61,7 @@ else:
             for i, trait in enumerate(traits):
                 values.append(cols[i].slider(f"{bundle} - {trait}", 0.0, 1.0, 0.5, 0.01))
             competence_scores[bundle] = np.mean(values)
-    
+
     if st.button("📈 분석하기"):
         competence_scores = calculate_competence_scores(competence_scores)
         comp, att, mis, outcome = compute_layers(competence_scores)
