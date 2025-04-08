@@ -1,10 +1,15 @@
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
+import sys
+import os
 
-# 정확한 모듈 경로 사용
-from modules.bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
-from modules.radar_chart import draw_all_radars, draw_outcome_layer
+# ✅ Streamlit Cloud 환경에서 modules 경로 추가
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "modules")))
+
+# ✅ 모듈 import (modules. 접두어 없이)
+from bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
+from radar_chart import draw_all_radars, draw_outcome_layer
 
 # Streamlit 기본 설정
 st.set_page_config(page_title="🌧️ 봄비 점수 분석기", page_icon="🌱", layout="wide")
