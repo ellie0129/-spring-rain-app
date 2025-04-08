@@ -179,18 +179,20 @@ else:
     user_inputs = {}
     
     if selected_name.strip() == "이춘우":
-    st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
-    st.write("**🎉 이춘우 교수님은 의심할 여지 없는 완벽한 기업가이십니다!**")
-    user_inputs = {}
-    for bundle, traits in TRAIT_STRUCTURE.items():
-        for trait in traits:
-            user_inputs[f"{bundle}_{trait}"] = 1.0
-elif selected_name in sample_profiles:
         st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
-        user_inputs = {f"{bundle}_{trait}": sample_profiles[selected_name][bundle]
-                       for bundle, traits in TRAIT_STRUCTURE.items()
-                       for trait in traits}
+        st.write("**🎉 이춘우 교수님은 의심할 여지 없는 완벽한 기업가이십니다!**")
+        user_inputs = {}
+        for bundle, traits in TRAIT_STRUCTURE.items():
+            for trait in traits:
+                user_inputs[f"{bundle}_{trait}"] = 1.0
+    elif selected_name in sample_profiles:
+        st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
+        user_inputs = {}
+        for bundle, traits in TRAIT_STRUCTURE.items():
+            for trait in traits:
+                user_inputs[f"{bundle}_{trait}"] = sample_profiles[selected_name].get(bundle, 0.8)
     else:
+        st.info("아래에서 직접 세부 역량을 입력해도 됩니다.")
         st.info("슬라이더를 사용해 직접 값을 입력할 수 있습니다.")
         for bundle, traits in TRAIT_STRUCTURE.items():
             st.markdown(f"**{bundle}**")
