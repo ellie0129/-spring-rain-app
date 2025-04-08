@@ -27,10 +27,9 @@ else:
     # 명시적 경로 설정 (추천 방식)
     module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'modules'))
     if module_path not in sys.path:
-        sys.path.append(module_path)
-
+      
     # 경로를 추가했으므로 모듈 이름만 import
-    from bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
+    from modules.bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
     from radar_chart import draw_all_radars, draw_outcome_layer
 
     st.header("🤖 인물 분석")
