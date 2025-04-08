@@ -138,6 +138,81 @@ elif menu == "분석기":
     if st.button("💧 분석 실행"):
         st.success("분석이 시작되었습니다!")
         st.markdown("⚙️ 분석 결과가 여기에 표시될 수 있도록 기능 연동을 준비해주세요.")
+        # 역량 번들 점수 계산
+        competence_scores = {}
+        for bundle, traits in TRAIT_STRUCTURE.items():
+            trait_values = [user_inputs[f"{bundle}_{trait}"] for trait in traits]
+            competence_scores[bundle] = round(sum(trait_values) / len(trait_values), 3)
+
+        # Competence → Attitude 매핑
+        comp_to_att = {
+            "도전정신": ["창조 · 발명 · 개발", "조합(결합/융합) · 중개"],
+            "최고·최초·최신·유일 지향": ["조합(결합/융합) · 중개", "혁신 · 변화 · 개선"],
+            "Integrity": ["혁신 · 변화 · 개선", "도전 · 극복"],
+            "창조적 문제해결": ["도전 · 극복", "주도(자수성가) · 사업화"],
+            "독립성 · 자기고용 · 자기세계": ["주도(자수성가) · 사업화", "역발상 · 재해석"],
+            "진취성(선도성)": ["역발상 · 재해석", "개척 · 탐험 · 모험"],
+            "위험감수성": ["개척 · 탐험 · 모험", "발견 · 발상 · 상상"],
+            "혁신성": ["발견 · 발상 · 상상", "창조 · 발명 · 개발"]
+        }
+
+        # Attitude 계산
+        attitude_scores = {}
+        for c, val in competence_scores.items():
+            for a in comp_to_att[c]:
+                attitude_scores[a] = attitude_scores.get(a, 0) + val * 0.5
+        attitude_scores = {k: round(min(v, 1.0), 3) for k, v in attitude_scores.items()}
+
+        # Attitude → Mission 매핑
+        att_to_mis = {
+            "창조 · 발명 · 개발": {"기회추구": 0.25, "미래지향": 0.25},
+            "조합(결합/융합) · 중개": {"기회추구": 0.5},
+            "혁신 · 변화 · 개선": {"기회추구": 0.25, "공동체발전": 0.25},
+            "도전 · 극복": {"공동체발전": 0.5},
+            "주도(자수성가) · 사업화": {"공동체발전": 0.25, "창조적파괴": 0.25},
+            "역발상 · 재해석": {"창조적파괴": 0.5},
+            "개척 · 탐험 · 모험": {"창조적파괴": 0.25, "미래지향": 0.25},
+            "발견 · 발상 · 상상": {"미래지향": 0.5}
+        }
+
+        # Mission 계산
+        mission_scores = {}
+        for a, val in attitude_scores.items():
+            for m, w in att_to_mis[a].items():
+                mission_scores[m] = mission_scores.get(m, 0) + val * w
+        mission_scores = {k: round(min(v, 1.0), 3) for k, v in mission_scores.items()}
+
+        # Outcome 계산
+        outcome_score = round(min(sum(mission_scores.values()) * 0.25, 1.0), 3)
+
+        # 레이더 차트 함수
+        def radar(title, data, clockwise=True):
+            labels = list(data.keys())
+            values = list(data.values())
+            if clockwise:
+                labels = labels[::-1]
+                values = values[::-1]
+            labels += [labels[0]]
+            values += [values[0]]
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title))
+            fig.update_layout(
+                polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+                showlegend=False
+            )
+            st.markdown(f"#### {title}")
+            st.plotly_chart(fig, use_container_width=True)
+
+        # 출력
+        st.markdown("## 📊 분석 결과")
+        radar("🧩 Competence Layer", competence_scores, clockwise=True)
+        radar("🌀 Attitude Layer", attitude_scores, clockwise=False)
+        radar("🎯 Mission Layer", mission_scores, clockwise=True)
+
+        st.markdown("### 🌧️ Outcome Score (봄비 점수)")
+        st.success(f"최종 봄비 점수: {outcome_score * 100:.2f}점")
+
 elif menu == "샘플 데이터":
     st.header("🧪 샘플 인물 데이터 보기")
 
