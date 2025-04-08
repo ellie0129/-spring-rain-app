@@ -179,12 +179,12 @@ else:
     user_inputs = {}
     
     if selected_name.strip() == "이춘우":
-    st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
-    st.write("**🎉 이춘우 교수님은 의심할 여지 없는 완벽한 기업가이십니다!**")
-    user_inputs = {}
-    for bundle, traits in TRAIT_STRUCTURE.items():
-        for trait in traits:
-            user_inputs[f"{bundle}_{trait}"] = 1.0
+        st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
+        st.write("**🎉 이춘우 교수님은 의심할 여지 없는 완벽한 기업가이십니다!**")
+        user_inputs = {}
+        for bundle, traits in TRAIT_STRUCTURE.items():
+            for trait in traits:
+                user_inputs[f"{bundle}_{trait}"] = 1.0
 elif selected_name in sample_profiles:
         st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
         user_inputs = {f"{bundle}_{trait}": sample_profiles[selected_name][bundle]
