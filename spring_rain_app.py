@@ -115,8 +115,8 @@ elif menu == "분석기":
 
     user_inputs = {}
     for bundle, traits in TRAIT_STRUCTURE.items():
-        st.markdown(" ")
-        st.markdown(f"**{bundle}**")
+        st.markdown("\n\n")
+        st.markdown(f"###  **{bundle}**")
         cols = st.columns(len(traits))
         for i, trait in enumerate(traits):
             user_inputs[f"{bundle}_{trait}"] = cols[i].slider(trait, 0.0, 1.0, 0.5, 0.01)
