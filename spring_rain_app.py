@@ -302,7 +302,7 @@ elif menu == "샘플 데이터":
         
         outcome_score = round(min(sum(mission_scores.values()) * 0.25, 1.0), 3)
         
-        # Radar 차트 함수 (샘플 데이터 탭에서도 재사용)
+        # Radar 차트 함수 (샘플 데이터 탭에서 재사용)
         def radar(title, data, clockwise=True):
             labels = list(data.keys())
             values = list(data.values())
@@ -319,50 +319,74 @@ elif menu == "샘플 데이터":
             )
             st.plotly_chart(fig, use_container_width=True)
         
-        # ========= 원하는 순서로 출력 =========
+        # 이모지 매핑 (역량 번들 명 옆에 추가)
+        sample_emojis = {
+            "도전정신": "🔥",
+            "최고·최초·최신·유일 지향": "🏆",
+            "Integrity": "🧭",
+            "창조적 문제해결": "🧠",
+            "독립성 · 자기고용 · 자기세계": "🚀",
+            "진취성(선도성)": "🌟",
+            "위험감수성": "⚠️",
+            "혁신성": "💡"
+        }
+        
+        # ========= 원하는 순서대로 출력 =========
         # 1. 해석 주석
         st.markdown("<h4>🔎 해석 주석</h4>", unsafe_allow_html=True)
         st.markdown(f"<p style='font-size:16px;'>{sample_comments.get(selected_profile, '해당 인물에 대한 설명이 없습니다.')}</p>", unsafe_allow_html=True)
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # 2. 레이더 차트 3개 (종방향)
-        with st.expander("**Competence Layer (Aggregated) Radar Chart**", expanded=True):
+        # 2. 레이더 차트 3개 (횡 방향: 3열로 배치)
+        st.markdown("<h4>📊 레이더 차트</h4>", unsafe_allow_html=True)
+        cols = st.columns(3)
+        with cols[0]:
+            st.markdown("**🧩 Competence Layer (Aggregated) Radar Chart**")
             radar("🧩 Competence Layer (Aggregated)", computed_competence)
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("**Attitude Layer Radar Chart**", expanded=True):
+        with cols[1]:
+            st.markdown("**🌀 Attitude Layer Radar Chart**")
             radar("🌀 Attitude Layer", attitude_scores)
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("**Mission Layer Radar Chart**", expanded=True):
+        with cols[2]:
+            st.markdown("**🎯 Mission Layer Radar Chart**")
             radar("🎯 Mission Layer", mission_scores)
         st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # 3. 계산된 결과 (종방향)
+        # 3. ▶️ 계산된 결과 (순서: 상세 역량 번들 점수, Competence, Attitude, Mission, Outcome)
         st.markdown("#### ▶️ 계산된 결과", unsafe_allow_html=True)
-        with st.expander("**Competence Layer (평균 점수)**"):
-            st.write(computed_competence)
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("**Attitude Layer**"):
-            st.write(attitude_scores)
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("**Mission Layer**"):
-            st.write(mission_scores)
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("**Outcome (봄비 점수)**"):
-            st.success(f"{outcome_score * 100:.2f}점")
-        st.markdown("<br><br>", unsafe_allow_html=True)
         
-        # 4. 상세 역량 번들 점수 (하위 요소별) - 토글 적용
+        # 3-1. 상세 역량 번들 점수 (토글)
         with st.expander("**▶ 상세 역량 번들 점수 (하위 요소별)**"):
             st.markdown("#### 상세 역량 번들 점수 (하위 요소별)")
             for bundle, subtraits in profile_detail.items():
+                emoji = sample_emojis.get(bundle, "")
+                st.markdown(f"**{emoji} {bundle}**")
                 if isinstance(subtraits, dict):
-                    st.markdown(f"**{bundle}**")
                     trait_list = []
                     for trait, score in subtraits.items():
                         st.write(f"- {trait}: {score}")
                         trait_list.append(score)
                     avg_score = round(sum(trait_list) / len(trait_list), 3) if trait_list else 0
                     st.write(f"**→ {bundle} 평균 점수: {avg_score}**")
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 3-2. Competence Layer (평균 점수)
+        with st.expander("**Competence Layer (평균 점수)**"):
+            st.write(computed_competence)
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 3-3. Attitude Layer
+        with st.expander("**Attitude Layer**"):
+            st.write(attitude_scores)
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 3-4. Mission Layer
+        with st.expander("**Mission Layer**"):
+            st.write(mission_scores)
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 3-5. Outcome (봄비 점수)
+        with st.expander("**Outcome (봄비 점수)**"):
+            st.success(f"{outcome_score * 100:.2f}점")
         st.markdown("<br><br>", unsafe_allow_html=True)
         
     else:
