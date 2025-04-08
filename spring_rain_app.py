@@ -13,24 +13,53 @@ menu = st.sidebar.radio("메뉴", ["분석기", "모형 설명"])
 # ──────────────────────────────────────────────
 # 📘 모형 설명 탭
 # ──────────────────────────────────────────────
+# ──────────────────────────────────────────────
+# 📘 모형 설명 탭 (수정 금지 - 원본 복원)
+# ──────────────────────────────────────────────
 if menu == "모형 설명":
     st.header("📘 기업가정신 통합모형 구조 설명")
     st.markdown("""
-    - Competence Layer (8개 역량 번들)
-    - Attitude Layer (8개 행동양식)
-    - Mission Layer (4개 사명)
-    - Outcome Layer (최종 점수)
+    ### 🔄 전체 레이어 구조
 
-    점수 흐름:
-    Competence → Attitude → Mission → Outcome
+    이 앱은 이춘우 교수님의 [기업가정신 통합모형]에 따라 총 4개의 레이어로 구성되어 있습니다:
 
-    Outcome은 Mission 점수 평균의 0.25배로 계산되어 최종 봄비 점수가 됩니다.
+    1. **Outcome Layer (성과)**: 최종 성취 - `부의 증대`, `가치 창출`
+    2. **Mission Layer (사명)**: 사업의 지향점 - `기회추구`, `공동체발전`, `창조적파괴`, `미래지향`
+    3. **Attitude Layer (행동양식)**: 기업가의 태도와 접근 방식 (총 8개)
+    4. **Competence Layer (역량 번들)**: 세부 역량 요소들로 구성된 기본기 (총 8개)
+
+    각 레이어는 아래로부터 위로 점수가 **전이(transfer)** 되어 올라갑니다.
+
+    ---
+
+    ### 🧬 점수 전이 흐름 요약
+
+    - **역량(Competence)** → 태도(Attitude)로: 각 역량 번들이 2개 태도에 0.5점씩 기여
+    - **태도(Attitude)** → 사명(Mission)으로: 각 태도가 관련된 사명에 0.25~0.5점 비중으로 연결
+    - **사명(Mission)** → 성과(Outcome)로: 각 사명이 `부의 증대` & `가치 창출`에 각각 0.25점 기여
+
+    이 구조를 통해 최종 **Outcome Layer**에서 1점(100점 만점) 기준으로 `봄비 점수`가 계산됩니다.
+
+    ---
+
+    ### 🧭 시각적 구조 요약
+
+    아래는 전체 통합모형의 계층적 흐름입니다:
+
+    ``Competence`` → ``Attitude`` → ``Mission`` → ``Outcome``
+
+    또는 쉽게 표현하면:
+
+    > 부지런함/창의성/도전정신 → 행동양식들 → 사회/시장 사명 → 가치/부 창출
+
+    ---
+
+    ### 🖼️ 모형 도식 이미지
+
+    📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
     """)
     st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
-
-# ──────────────────────────────────────────────
-# 🤖 분석기 탭
-# ──────────────────────────────────────────────
+    st.markdown("---")
 else:
     st.header("🤖 인물 분석기")
 
@@ -92,6 +121,32 @@ else:
         return att, mis, outcome
 
     def draw_radar_chart(title, scores, clockwise_order):
+        labels = clockwise_order[::-1]  # 시계방향 정렬
+        values = [scores.get(label, 0) for label in labels]
+        labels += [labels[0]]
+        values += [values[0]]
+        fig = go.Figure()
+        fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=title))
+        fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=False)
+        st.markdown(f"### {title}")
+        st.plotly_chart(fig, use_container_width=True)
+
+    def draw_outcome_layer(comp_scores, att_scores, mis_scores, comp_order, att_order, mis_order):
+        fig = go.Figure()
+        def close_loop(labels, values):
+            return labels + [labels[0]], values + [values[0]]
+
+        for scores, order, name in zip(
+            [mis_scores, att_scores, comp_scores],
+            [mis_order, att_order, comp_order],
+            ["🎯 Mission", "🌀 Attitude", "🧩 Competence"]
+        ):
+            labels, values = close_loop(order[::-1], [scores.get(k, 0) for k in order[::-1]])
+            fig.add_trace(go.Scatterpolar(r=values, theta=labels, fill='toself', name=name))
+
+        fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])), showlegend=True)
+        st.markdown("### 🌈 Outcome Layer - 통합 레이더 차트")
+        st.plotly_chart(fig, use_container_width=True)
         labels = clockwise_order
         values = [scores.get(label, 0) for label in labels]
         labels += [labels[0]]
@@ -122,7 +177,16 @@ else:
     selected_name = st.text_input("인물 이름:")
 
     user_inputs = {}
-    if selected_name in sample_profiles:
+    
+    if selected_name.strip() == "이춘우":
+        st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
+        st.write("**🎉 이춘우 교수님은 의심할 여지 없는 완벽한 기업가이십니다!**")
+        user_inputs = {}
+        for bundle, traits in TRAIT_STRUCTURE.items():
+            for trait in traits:
+                user_inputs[f"{bundle}_{trait}"] = 1.0
+
+elif selected_name in sample_profiles:
         st.success(f"✅ '{selected_name}'의 데이터를 불러왔습니다.")
         user_inputs = {f"{bundle}_{trait}": sample_profiles[selected_name][bundle]
                        for bundle, traits in TRAIT_STRUCTURE.items()
