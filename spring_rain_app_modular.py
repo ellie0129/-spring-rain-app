@@ -1,9 +1,14 @@
-import sys
-import os
 import streamlit as st
 import numpy as np
-from modules.bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
-from modules.radar_chart import draw_all_radars, draw_outcome_layer
+import plotly.graph_objects as go
+import sys
+import os
+
+# 명시적으로 모듈 경로 추가 (중요!)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "modules")))
+
+from bombi_score_module import TRAIT_STRUCTURE, calculate_competence_scores, compute_layers
+from radar_chart import draw_all_radars, draw_outcome_layer
 
 # Streamlit 페이지 기본 설정
 st.set_page_config(page_title="🌧️ 봄비 점수 분석기", page_icon="🌱", layout="wide")
@@ -39,7 +44,7 @@ else:
     
     selected_name = st.text_input("분석할 인물 이름을 입력하세요:", value="제프 베조스")
     if selected_name == "이춘우":
-        st.success("이춘우 교수님은 완벽한 기업가이십니다!")
+        st.success("이춘우 교수님은 완벽한 기업가이십니다! 🎉")
     
     if selected_name in sample_profiles:
         competence_scores = sample_profiles[selected_name]
@@ -51,7 +56,7 @@ else:
             cols = st.columns(len(traits))
             values = []
             for i, trait in enumerate(traits):
-                values.append(cols[i].slider(f"{bundle}-{trait}", 0.0, 1.0, 0.5, 0.01))
+                values.append(cols[i].slider(f"{bundle} - {trait}", 0.0, 1.0, 0.5, 0.01))
             competence_scores[bundle] = np.mean(values)
     
     if st.button("📈 분석하기"):
@@ -62,7 +67,7 @@ else:
         st.write("**Competence 점수:**", comp)
         st.write("**Attitude 점수:**", att)
         st.write("**Mission 점수:**", mis)
-        st.success(f"**최종 봄비 점수:** {outcome * 100:.2f}점")
+        st.success(f"**최종 봄비 점수:** {outcome * 100:.2f}점 🎯")
 
         fig_comp, fig_att, fig_mis = draw_all_radars(comp, att, mis)
         st.plotly_chart(fig_comp, use_container_width=True)
