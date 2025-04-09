@@ -55,9 +55,9 @@ if menu == "모형 설명":
     
     ### 🖼️ 모형 도식 이미지
     
-    📌 *이 모형은 실제 논문(이춘우, 2019)에서 발췌한 이미지로 시각화한 것입니다.*
+    📌 *이 모형은 실제 논문(이춘우, 2019 및 2020)에서 발췌한 이미지로 시각화한 것입니다.*
     """)
-    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1c734f642e1b800d97c9e70c9abbd592.png", use_container_width=True)
+    st.image("https://raw.githubusercontent.com/ellie0129/spring-rain-app/main/assets/1ce34f642e1b80808f4edd8cc64b1a95.png", use_container_width=True)
     st.markdown("---")
 
 ##############################
